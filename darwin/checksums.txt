@@ -1,0 +1,2 @@
+d2c54a220a8960da6b374c45bdc5995e9aaefad68d6aacba1269976d069de3bf  dotsecenv_0.0.1_Darwin_arm64.tar.gz
+42c0e3fbefa3555fa810d6240d40c6cf3161d8fb1bf46adf5080a2272f0f316e  dotsecenv_0.0.1_Darwin_x86_64.tar.gz

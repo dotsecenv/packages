@@ -1,0 +1,280 @@
+name: Update Packages
+
+on:
+  repository_dispatch:
+    types: [update-packages]
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. v1.2.3)"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  VERSION: ${{ github.event.client_payload.version || inputs.version }}
+
+jobs:
+  update-repos:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Ensure Directory Structure
+        run: |
+          mkdir -p apt/conf
+          mkdir -p yum
+          mkdir -p arch/x86_64
+          mkdir -p arch/aarch64
+          mkdir -p darwin/arm64
+          mkdir -p darwin/x86_64
+          mkdir -p linux/arm64
+          mkdir -p linux/x86_64
+
+      - name: Install Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev createrepo-c
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          trust_level: 5
+
+      - name: Export GPG Public Key
+        run: |
+          gpg --armor --export "${{ steps.import_gpg.outputs.keyid }}" > key.asc
+
+      - name: Generate App Token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            dotsecenv
+
+      - name: Download Release Assets
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: dotsecenv/dotsecenv
+          version: tags/${{ env.VERSION }}
+          token: ${{ steps.app-token.outputs.token }}
+          regex: true
+          file: "(dotsecenv_.*\\.(deb|rpm|zst|gz|sig)|checksums\\.txt.*)"
+          target: "${{ github.workspace }}/incoming-assets/"
+
+      - name: Verify Assets
+        working-directory: "${{ github.workspace }}/incoming-assets"
+        run: |
+          # Lock checksums.txt as root of trust
+          sudo chattr +i checksums.txt
+
+          # Verify checksums.txt signature
+          # The key was imported in the previous step
+          gpg --verify checksums.txt.sig checksums.txt
+
+          # Verify file checksums
+          sha256sum -c checksums.txt
+
+      - name: Update apt repo
+        run: |
+          for pair in "amd64 x86_64" "arm64 aarch64"; do
+            set -- $pair
+            go_arch=$1
+            pkg_arch=$2
+
+            # Deploy debs
+            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.deb apt/
+            grep "dotsecenv_${VERSION#v}_${go_arch}.deb" incoming-assets/checksums.txt >> apt/checksums.txt
+
+            # Lock files
+            sudo chattr +i apt/dotsecenv_${VERSION#v}_${go_arch}.deb
+
+            # Verify archive integrity
+            cd apt/
+            grep "dotsecenv_${VERSION#v}_${go_arch}.deb" checksums.txt | sha256sum -c
+            cd -
+          done
+
+          cd apt/
+
+          # Generate packages
+          dpkg-scanpackages --multiversion . /dev/null > Packages
+          gzip -k -f Packages
+
+          # Generate release
+          apt-ftparchive -o APT::FTPArchive::Release::Architectures="amd64 arm64" release . > Release
+
+          # Sign release
+          gpg --batch --yes --default-key "${{ steps.import_gpg.outputs.keyid }}" -abs -o - Release > Release.gpg
+          gpg --batch --yes --default-key "${{ steps.import_gpg.outputs.keyid }}" --clearsign -o - Release > InRelease
+
+      - name: Update yum repo
+        run: |
+          for pair in "amd64 x86_64" "arm64 aarch64"; do
+            set -- $pair
+            go_arch=$1
+            pkg_arch=$2
+
+            # Deploy debs
+            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.rpm yum/
+            grep "dotsecenv_${VERSION#v}_${go_arch}.rpm" incoming-assets/checksums.txt >> yum/checksums.txt
+
+            # Lock files
+            sudo chattr +i yum/dotsecenv_${VERSION#v}_${go_arch}.rpm
+
+            # Verify archive integrity
+            cd yum/
+            grep "dotsecenv_${VERSION#v}_${go_arch}.rpm" checksums.txt | sha256sum -c
+            cd -
+          done
+
+          cd yum/
+
+          # Create repo
+          createrepo_c .
+
+          # Sign repo
+          gpg --batch --yes --detach-sign --armor --default-key "${{ steps.import_gpg.outputs.keyid }}" repodata/repomd.xml
+
+      - name: Prepare Arch Files
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          for pair in "amd64 x86_64" "arm64 aarch64"; do
+              set -- $pair
+              go_arch=$1
+              pkg_arch=$2
+
+              # Delete existing packages and signatures
+              rm -f arch/"$pkg_arch"/*.pkg.tar.zst
+              rm -f arch/"$pkg_arch"/*.pkg.tar.zst.sig
+
+              # Deploy packages
+              cp incoming-assets/*_"${go_arch}".pkg.tar.zst{,.sig} arch/"$pkg_arch"/
+              grep "_${go_arch}.pkg.tar.zst" incoming-assets/checksums.txt >> arch/"$pkg_arch"/checksums.txt
+
+              cd arch/"$pkg_arch"/
+
+              # Lock files
+              sudo chattr +i *_"${go_arch}".pkg.tar.zst
+
+              # Verify GPG signatures
+              gpg --verify dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst.sig dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst
+
+              # Verify archive integrity
+              grep "dotsecenv_${VERSION#v}_${go_arch}.pkg.tar.zst" checksums.txt | sha256sum -c
+
+              cd -
+          done
+
+      - name: Update Arch Repo
+        uses: docker://archlinux:base-devel
+        env:
+          VERSION: ${{ env.VERSION }}
+        with:
+          entrypoint: /bin/bash
+          args: >-
+            -c "pacman -Sy --noconfirm &&
+            cd arch/x86_64 && repo-add dotsecenv.db.tar.gz dotsecenv_${VERSION#v}_amd64.pkg.tar.zst &&
+            cd ../aarch64 && repo-add dotsecenv.db.tar.gz dotsecenv_${VERSION#v}_arm64.pkg.tar.zst"
+
+      - name: Update Darwin repo
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          for pair in "arm64 arm64" "x86_64 x86_64"; do
+            set -- $pair
+            go_arch=$1
+            pkg_arch=$2
+
+            # Deploy tarball
+            cp incoming-assets/dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz darwin/
+            grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz" incoming-assets/checksums.txt >> darwin/checksums.txt
+
+            # Lock files
+            sudo chattr +i darwin/dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz
+
+            # Verify archive integrity
+            cd darwin/
+            grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz" checksums.txt | sha256sum -c
+            cd -
+          done
+
+      - name: Update Linux repo
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          for pair in "arm64 arm64" "x86_64 x86_64"; do
+            set -- $pair
+            go_arch=$1
+            pkg_arch=$2
+
+            # Deploy tarball
+            cp incoming-assets/dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz linux/
+            grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz" incoming-assets/checksums.txt >> linux/checksums.txt
+
+            # Lock files
+            sudo chattr +i linux/dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz
+
+            # Verify archive integrity
+            cd linux/
+            grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz" checksums.txt | sha256sum -c
+            cd -
+          done
+
+      - name: Unlock Files
+        if: always()
+        run: |
+          # apt
+          sudo chattr -i apt/*.deb || true
+
+          # yum
+          sudo chattr -i yum/*.rpm || true
+
+          # arch
+          sudo chattr -i arch/x86_64/*.pkg.tar.zst || true
+          sudo chattr -i arch/aarch64/*.pkg.tar.zst || true
+
+          # darwin
+          sudo chattr -i darwin/arm64/*.tar.gz || true
+          sudo chattr -i darwin/x86_64/*.tar.gz || true
+
+          # linux
+          sudo chattr -i linux/arm64/*.tar.gz || true
+          sudo chattr -i linux/x86_64/*.tar.gz || true
+
+      - name: Fix Permissions
+        run: sudo chown -R $USER:$USER arch/
+
+      - name: Cleanup downloaded assets
+        working-directory: incoming-assets
+        run: |
+          sudo chattr -i checksums.txt || true
+          cd ..
+          rm -rf incoming-assets
+
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Updated packages for ${{ env.VERSION }}"
+          file_pattern: "apt/ arch/ darwin/ linux/ yum/ key.asc README.md"
+          tag_name: ${{ env.VERSION }}
+
+      - name: Trigger Publish Workflow
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          event-type: publish-packages

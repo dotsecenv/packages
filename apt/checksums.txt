@@ -1,0 +1,2 @@
+b838104d43f92fe5247c4daea373245ab89125fd5247b582f75cf32bea87c3f6  dotsecenv_0.0.1_amd64.deb
+dc73d4644ddbeb77d524762dd178ba6074af5f8f3cb86022cbd1b0ad9b55cf1c  dotsecenv_0.0.1_arm64.deb

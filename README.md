@@ -11,7 +11,7 @@ uid           DotSecEnv Releases (Automated Release Signing Key) <release@dotsec
 sub   rsa4096 2025-12-19 [E] [expires: 2027-12-19]
 ```
 
-It can be verified fromthe [OpenPgp Keyserver](https://keys.openpgp.org/search?q=E60A1740BAEF49284D22EA7D3C376348F0921C59) or on [Keybase](https://keybase.io/dotsecenv).
+The key can be verified using the [OpenPgp Keyserver](https://keys.openpgp.org/search?q=E60A1740BAEF49284D22EA7D3C376348F0921C59) or on [Keybase](https://keybase.io/dotsecenv).
 
 ```shell
 # OpenPGP Keyserver

@@ -1,2 +1,4 @@
 88959ce1eddcf52ab28e62d6c3d2c0af6cf810f3685a42d94af7d9b43c36afa1  dotsecenv_0.0.1_amd64.rpm
 35ef147853ac40ac1aed181b267925ca0aa37b5f8bfe8a7de4b8daa10f122851  dotsecenv_0.0.1_arm64.rpm
+537467fae15485bb4b396e349b29ae55db3ecb73b9a6df10563f771070f1f568  dotsecenv_0.0.2_amd64.rpm
+e467b468fffbf6a60565cafdb369131e73cea4a5173fc885c5ee34b706c4dd75  dotsecenv_0.0.2_arm64.rpm

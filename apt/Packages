@@ -34,3 +34,39 @@ Homepage: https://github.com/dotsecenv/dotsecenv
 Description: Safe environment secrets
 License: APACHE-2.0
 
+Package: dotsecenv
+Version: 0.0.2
+Architecture: arm64
+Maintainer: DotSecEnv <release@dotsecenv.com>
+Installed-Size: 5717
+Depends: gnupg
+Suggests: bash-completion
+Filename: ./dotsecenv_0.0.2_arm64.deb
+Size: 2445710
+MD5sum: bb99e82d1da90cdf4dad04d39fe4f6b7
+SHA1: 8563a5ee309f0665953e0f5461b2d3c8f21d83b6
+SHA256: f90c639ac7ae331524a5a3a12c8d94c647b60f2d3189bb78c2e073d561699824
+Section: default
+Priority: optional
+Homepage: https://github.com/dotsecenv/dotsecenv
+Description: Safe environment secrets
+License: APACHE-2.0
+
+Package: dotsecenv
+Version: 0.0.2
+Architecture: amd64
+Maintainer: DotSecEnv <release@dotsecenv.com>
+Installed-Size: 6213
+Depends: gnupg
+Suggests: bash-completion
+Filename: ./dotsecenv_0.0.2_amd64.deb
+Size: 2688104
+MD5sum: 5e385516ae211fb634caf670336630a9
+SHA1: 3789eced72d16ceb9b002d44fe4a8c54bab59d7d
+SHA256: 5f309bd0da3c92c95aeb5d7e0a54b0698f3b0ad2590f424098abe2b750378655
+Section: default
+Priority: optional
+Homepage: https://github.com/dotsecenv/dotsecenv
+Description: Safe environment secrets
+License: APACHE-2.0
+

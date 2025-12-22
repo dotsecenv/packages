@@ -97,15 +97,19 @@ jobs:
             pkg_arch=$2
 
             # Deploy debs
-            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.deb apt/
+            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.deb{,.sig} apt/
             grep "dotsecenv_${VERSION#v}_${go_arch}.deb" incoming-assets/checksums.txt >> apt/checksums.txt
 
             # Lock files
             sudo chattr +i apt/dotsecenv_${VERSION#v}_${go_arch}.deb
 
-            # Verify archive integrity
             cd apt/
-            grep "dotsecenv_${VERSION#v}_${go_arch}.deb" checksums.txt | sha256sum -c
+
+            # Verify GPG signature
+            gpg --verify "dotsecenv_${VERSION#v}_${go_arch}.deb.sig" "dotsecenv_${VERSION#v}_${go_arch}.deb"
+
+            # Verify archive integrity
+            grep "dotsecenv_${VERSION#v}_${go_arch}.deb$" checksums.txt | sha256sum -c
             cd -
           done
 
@@ -130,15 +134,19 @@ jobs:
             pkg_arch=$2
 
             # Deploy debs
-            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.rpm yum/
+            cp incoming-assets/dotsecenv_${VERSION#v}_${go_arch}.rpm{,.sig} yum/
             grep "dotsecenv_${VERSION#v}_${go_arch}.rpm" incoming-assets/checksums.txt >> yum/checksums.txt
 
             # Lock files
             sudo chattr +i yum/dotsecenv_${VERSION#v}_${go_arch}.rpm
 
-            # Verify archive integrity
             cd yum/
-            grep "dotsecenv_${VERSION#v}_${go_arch}.rpm" checksums.txt | sha256sum -c
+
+            # Verify GPG signature
+            gpg --verify "dotsecenv_${VERSION#v}_${go_arch}.rpm.sig" "dotsecenv_${VERSION#v}_${go_arch}.rpm"
+
+            # Verify archive integrity
+            grep "dotsecenv_${VERSION#v}_${go_arch}.rpm$" checksums.txt | sha256sum -c
             cd -
           done
 
@@ -176,7 +184,7 @@ jobs:
               gpg --verify dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst.sig dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst
 
               # Verify archive integrity
-              grep "dotsecenv_${VERSION#v}_${go_arch}.pkg.tar.zst" checksums.txt | sha256sum -c
+              grep "dotsecenv_${VERSION#v}_${go_arch}.pkg.tar.zst$" checksums.txt | sha256sum -c
 
               cd -
           done
@@ -202,7 +210,7 @@ jobs:
             pkg_arch=$2
 
             # Deploy tarball
-            cp incoming-assets/dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz darwin/
+            cp incoming-assets/dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz{,.sig} darwin/
             grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz" incoming-assets/checksums.txt >> darwin/checksums.txt
 
             # Lock files
@@ -214,7 +222,7 @@ jobs:
             gpg --verify "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz.sig" "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz"
 
             # Verify archive integrity
-            grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz" checksums.txt | sha256sum -c
+            grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz$" checksums.txt | sha256sum -c
             cd -
           done
 
@@ -228,7 +236,7 @@ jobs:
             pkg_arch=$2
 
             # Deploy tarball
-            cp incoming-assets/dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz linux/
+            cp incoming-assets/dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz{,.sig} linux/
             grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz" incoming-assets/checksums.txt >> linux/checksums.txt
 
             # Lock files
@@ -240,7 +248,7 @@ jobs:
             gpg --verify "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz.sig" "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz"
 
             # Verify archive integrity
-            grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz" checksums.txt | sha256sum -c
+            grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz$" checksums.txt | sha256sum -c
             cd -
           done
 

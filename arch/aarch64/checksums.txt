@@ -5,3 +5,4 @@ f40af881c383abb83fd0b8dbd8f7285afd60f7f1b250bfd4e78c61c0d60188d3  dotsecenv_0.0.
 b7b34d779da2af8e6ec3abe82d20f1bff5d80cfaa1b774c974abb47b61cd6542  dotsecenv_0.0.5_arm64.pkg.tar.zst
 bdaed15a591e777524ca157e38382b2304f7c9b359f137c44ca040dacfba8060  dotsecenv_0.0.6_arm64.pkg.tar.zst
 720aac3d4e38b7859b0bd5ca6534d9bbc5475e9a17a500cdd612e662aa98da6e  dotsecenv_0.0.7_arm64.pkg.tar.zst
+8bf7ea0d9296c08022505e942aded5fe9cccaa74fb7f5d3ca8231cc463c4ac04  dotsecenv_0.0.8_arm64.pkg.tar.zst

@@ -1,3 +1,4 @@
 85cfcbf504b5f73311225ad137d8b6267f5da4fd76c2b7eab141e9d96adfc2db  dotsecenv_0.0.1_amd64.pkg.tar.zst
 0cff70824b8f23d2aefc9f253054b3935553b4b5ed01d41ccf88b9b34b83466f  dotsecenv_0.0.2_amd64.pkg.tar.zst
 80c7f81d986077a2baee79fcceefc663de670c12986fb620776cb8aedf179999  dotsecenv_0.0.3_amd64.pkg.tar.zst
+b90442fb18dca2f5ec965bb9690f674e35a79fe0858c2d8159b4cd2a5ebd99af  dotsecenv_0.0.4_amd64.pkg.tar.zst

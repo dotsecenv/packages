@@ -73,7 +73,7 @@ jobs:
           version: tags/${{ env.VERSION }}
           token: ${{ steps.app-token.outputs.token }}
           regex: true
-          file: "(dotsecenv_.*\\.(deb|rpm|zst|gz|sig)|checksums\\.txt.*)"
+          file: "(dotsecenv_.*\\.(deb|rpm|gz|zst|json|sig)|checksums\\.txt.*)"
           target: "${{ github.workspace }}/incoming-assets/"
 
       - name: Verify Assets
@@ -172,7 +172,7 @@ jobs:
               # Lock files
               sudo chattr +i *_"${go_arch}".pkg.tar.zst
 
-              # Verify GPG signatures
+              # Verify GPG signature
               gpg --verify dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst.sig dotsecenv_${VERSION#v}_"${go_arch}".pkg.tar.zst
 
               # Verify archive integrity
@@ -208,8 +208,12 @@ jobs:
             # Lock files
             sudo chattr +i darwin/dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz
 
-            # Verify archive integrity
             cd darwin/
+
+            # Verify GPG signature
+            gpg --verify "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz.sig" "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz"
+
+            # Verify archive integrity
             grep "dotsecenv_${VERSION#v}_Darwin_${go_arch}.tar.gz" checksums.txt | sha256sum -c
             cd -
           done
@@ -230,8 +234,12 @@ jobs:
             # Lock files
             sudo chattr +i linux/dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz
 
-            # Verify archive integrity
             cd linux/
+
+            # Verify GPG signature
+            gpg --verify "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz.sig" "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz"
+
+            # Verify archive integrity
             grep "dotsecenv_${VERSION#v}_Linux_${go_arch}.tar.gz" checksums.txt | sha256sum -c
             cd -
           done

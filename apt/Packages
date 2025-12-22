@@ -1,148 +1,4 @@
 Package: dotsecenv
-Version: 0.0.1
-Architecture: amd64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 6207
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.1_amd64.deb
-Size: 2687352
-MD5sum: 2811fb8bc85ef63ac3fdbf84c7415954
-SHA1: a3e584d7d618c86074f6cd4dceea327b9465fbb9
-SHA256: b838104d43f92fe5247c4daea373245ab89125fd5247b582f75cf32bea87c3f6
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.1
-Architecture: arm64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 5715
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.1_arm64.deb
-Size: 2445182
-MD5sum: 0527f0ebc0cec54ca82e3fe2ac4c290a
-SHA1: 989349ac1e5b5ae8b6586e99d0d140edb9cff302
-SHA256: dc73d4644ddbeb77d524762dd178ba6074af5f8f3cb86022cbd1b0ad9b55cf1c
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.2
-Architecture: arm64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 5717
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.2_arm64.deb
-Size: 2445710
-MD5sum: bb99e82d1da90cdf4dad04d39fe4f6b7
-SHA1: 8563a5ee309f0665953e0f5461b2d3c8f21d83b6
-SHA256: f90c639ac7ae331524a5a3a12c8d94c647b60f2d3189bb78c2e073d561699824
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.2
-Architecture: amd64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 6213
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.2_amd64.deb
-Size: 2688104
-MD5sum: 5e385516ae211fb634caf670336630a9
-SHA1: 3789eced72d16ceb9b002d44fe4a8c54bab59d7d
-SHA256: 5f309bd0da3c92c95aeb5d7e0a54b0698f3b0ad2590f424098abe2b750378655
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.3
-Architecture: amd64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 6213
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.3_amd64.deb
-Size: 2688110
-MD5sum: 03843e5a710fb8c3013ef261b9183f0f
-SHA1: 4423089edcbe6d9c4148457fde4761ce60a6b061
-SHA256: 46832c98b604fa04777c06c92479f2d4a3948235085609394ba1b665ee29475c
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.3
-Architecture: arm64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 5717
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.3_arm64.deb
-Size: 2445712
-MD5sum: 5b6d844bb37b7105f1ecf7c86964341a
-SHA1: ee80cb095020fc6b123c5d39cd12c58149bc4fe8
-SHA256: e3f322c396deeaa97cd6b04f57067f634202695fc1d27e4b9093bdf830f29dee
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.4
-Architecture: amd64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 6213
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.4_amd64.deb
-Size: 2688112
-MD5sum: 96a6cf08918ba9e12182b013b09a6c64
-SHA1: 9ebe932e3e3f1445e31e27bad9ec39295489753d
-SHA256: 9b335f3e85fc77a4b4edfd0fa33d7b6d11e3d4c9c2613423c44739d614e960ae
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
-Version: 0.0.4
-Architecture: arm64
-Maintainer: DotSecEnv <release@dotsecenv.com>
-Installed-Size: 5717
-Depends: gnupg
-Suggests: bash-completion
-Filename: ./dotsecenv_0.0.4_arm64.deb
-Size: 2445698
-MD5sum: 4c720e6a3925089d298606d8a87e1662
-SHA1: fa45baefdadc1e85e62b20ff877648edfd7c384b
-SHA256: 02e1b76879c200d10079e185dbefb6bf94209b3c216c3d89bad7e57790b2bdfe
-Section: default
-Priority: optional
-Homepage: https://github.com/dotsecenv/dotsecenv
-Description: Safe environment secrets
-License: APACHE-2.0
-
-Package: dotsecenv
 Version: 0.0.5
 Architecture: arm64
 Maintainer: DotSecEnv <release@dotsecenv.com>
@@ -172,6 +28,42 @@ Size: 2688112
 MD5sum: 158daa0721908e97b7dd9f62e79e1d57
 SHA1: 0f2e49c21a5cfd76bf5fff0d8243b0b7cd82075e
 SHA256: 03ece40f41b160277a57ef1f08e22e8c2db65eb5e4384eb38f29cd668e4e24fa
+Section: default
+Priority: optional
+Homepage: https://github.com/dotsecenv/dotsecenv
+Description: Safe environment secrets
+License: APACHE-2.0
+
+Package: dotsecenv
+Version: 0.0.6
+Architecture: amd64
+Maintainer: DotSecEnv <release@dotsecenv.com>
+Installed-Size: 6213
+Depends: gnupg
+Suggests: bash-completion
+Filename: ./dotsecenv_0.0.6_amd64.deb
+Size: 2688106
+MD5sum: 3bd2a82fccd6ba634383723dbb36273d
+SHA1: d750c1509e572ac8cee37ec03897376af9e82295
+SHA256: 9d053d73966247df1d195453b53b123d0c056cc23766b0e3bd7718e9dc29d452
+Section: default
+Priority: optional
+Homepage: https://github.com/dotsecenv/dotsecenv
+Description: Safe environment secrets
+License: APACHE-2.0
+
+Package: dotsecenv
+Version: 0.0.6
+Architecture: arm64
+Maintainer: DotSecEnv <release@dotsecenv.com>
+Installed-Size: 5717
+Depends: gnupg
+Suggests: bash-completion
+Filename: ./dotsecenv_0.0.6_arm64.deb
+Size: 2445712
+MD5sum: 2748eed1da10c5eb1d86e314ec521046
+SHA1: 941df1c40c81c0e7481bdde3a56c998ccc682221
+SHA256: c3b621f22f7a3beffe9fa5cafc127d856730f4ee416912bc1ed6faee72dbfd70
 Section: default
 Priority: optional
 Homepage: https://github.com/dotsecenv/dotsecenv

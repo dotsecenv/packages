@@ -4,7 +4,7 @@ The `dotsecenv` packages are hosted here for Debian/Ubuntu, Fedora/RedHat, Arch 
 
 Public GPG Key: [key.asc](https://get.dotsecenv.com/key.asc)
 
-```
+```text
 pub   rsa4096 2025-12-19 [SC] [expires: 2027-12-19]
       E60A1740BAEF49284D22EA7D3C376348F0921C59
 uid           DotSecEnv Releases (Automated Release Signing Key) <release@dotsecenv.com>
@@ -27,19 +27,19 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 
 ## Debian / Ubuntu
 
-1.  **Trust the GPG Key**:
+1. **Trust the GPG Key**:
 
     ```bash
     curl -fsSL https://get.dotsecenv.com/key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/dotsecenv.gpg
     ```
 
-2.  **Add the Repository**:
+2. **Add the Repository**:
 
     ```bash
     echo "deb [signed-by=/etc/apt/keyrings/dotsecenv.gpg] https://get.dotsecenv.com/apt/ ./" | sudo tee /etc/apt/sources.list.d/dotsecenv.list
     ```
 
-3.  **Install**:
+3. **Install**:
     ```bash
     sudo apt-get update
     sudo apt-get install dotsecenv
@@ -47,7 +47,7 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 
 ## Fedora / RedHat / CentOS
 
-1.  **Add the Repository**:
+1. **Add the Repository**:
 
     ```bash
     cat <<EOF | sudo tee /etc/yum.repos.d/dotsecenv.repo
@@ -61,14 +61,15 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
     EOF
     ```
 
-2.  **Install**:
+2. **Install**:
+
     ```bash
     sudo dnf install dotsecenv
     ```
 
 ## Arch Linux / Manjaro
 
-1.  **Add to `pacman.conf`**:
+1. **Add to `pacman.conf`**:
 
     ```bash
     cat <<'EOF' | sudo tee -a /etc/pacman.conf
@@ -78,7 +79,7 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
     EOF
     ```
 
-2.  **Trust the Key**:
+2. **Trust the Key**:
     You need to locally sign the key for pacman to trust it.
 
     ```bash
@@ -86,7 +87,7 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
     sudo pacman-key --lsign-key E60A1740BAEF49284D22EA7D3C376348F0921C59
     ```
 
-3.  **Install**:
+3. **Install**:
     ```bash
     sudo pacman -Sy dotsecenv
     ```
@@ -145,3 +146,14 @@ MacOS builds are also available via Homebrew. Add the tap and install:
 brew tap dotsecenv/tap
 brew install dotsecenv
 ```
+
+## Shell Plugins
+
+Shell plugins that automatically load `.env` and `.secenv` files when entering directories
+are available for `zsh`, `bash`, and `fish`.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/dotsecenv/plugin/main/install.sh | bash
+```
+
+For plugin manager installation and additional details, see [github.com/dotsecenv/plugin#installation](https://github.com/dotsecenv/plugin#installation).

@@ -73,7 +73,7 @@ jobs:
           version: tags/${{ env.VERSION }}
           token: ${{ steps.app-token.outputs.token }}
           regex: true
-          file: "(dotsecenv_.*\\.(deb|rpm|gz|zst|json|sig)|checksums\\.txt.*)"
+          file: "(dotsecenv_.*\\.(deb|rpm|gz|zst|zip|json|sig)|checksums\\.txt.*)"
           target: "${{ github.workspace }}/incoming-assets/"
 
       - name: Verify Assets

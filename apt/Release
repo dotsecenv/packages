@@ -1,18 +1,18 @@
 Architectures: amd64 arm64
-Date: Sat, 27 Dec 2025 02:20:20 +0000
+Date: Wed, 31 Dec 2025 18:12:53 +0000
 MD5Sum:
- cdb1f6726628fa0a5ea2e1d4a9a43a7b             6228 Packages
- 896ccc003eb75d9e6b104441db42dfb1             1560 Packages.gz
- 97f442c1b71ebd1cf76aeb7ae6feb673               65 Release
+ f90945c2dd87ffae7b7d564e1b4819ca             7266 Packages
+ 2705b8e0064625ec643691868c102bac             1772 Packages.gz
+ 0e88fa0171dc329d517f0efa7b045bc8               65 Release
 SHA1:
- aeb83b30b50b3ae11d3777ceafc4cf6acd5ee308             6228 Packages
- fac0fb6001e35cd966475df59e38633c0d85f65e             1560 Packages.gz
- 9ad778192ab5abb56487b5d56cea63e95f79bb4c               65 Release
+ 5abcb116a7eb023beb5c2d53c8638f4a029e78ba             7266 Packages
+ e5bb0d256795842664fe31c7c95a22e8e94e6bf6             1772 Packages.gz
+ ad126e8c6d73d62cb5e809e6b0cf3cdba41442bb               65 Release
 SHA256:
- 0dec40abeee18c0e02627255166274321a9f717a30c11f831ec9a70cbae2b56c             6228 Packages
- ad1e2b81d784ac672237c52baa6a22b39c958cd72b2b856e7eb8c3049f270fe8             1560 Packages.gz
- 622ed4df5eac352339c1f672909879e9e5d3e5f34deb648b1f9daf6d54583a93               65 Release
+ bafa7bf1624dc304755e5c9695c98e49df05b0d005bfebd49ce09a8acc96d843             7266 Packages
+ fc2d5e3a6cf9349a2dc10cd556a14e6552761b46fc111608b7d6ade93cc299e5             1772 Packages.gz
+ e5a1c0957d64a2906530c8eb3a4f39c64dc8d9328446845d474955880ca29b95               65 Release
 SHA512:
- 5748943390c5c8a795b39d3c7712be08b001efba034fdc9c4795c55e00ca2ea3fadfbf0bb91471e254bea1a747997f870d06ec3fd9ebda50c7d94414bdc7c62e             6228 Packages
- e9ca6d823990cc5eddf9354beb5502b18416a55c5ea974710600a8f42571662f924c7863fc91192fa5b82d53f1b56403d74995016723d6f9962de1486865776f             1560 Packages.gz
- 956e7575dbb0e39fff81251f675f27fa4891b48f8b2f41cff3fd1fd873ce90767c4ab83fadc9c011185d36c2c8278e2ed87b2c0ce8a0db380fe6303fe7a92956               65 Release
+ 19f749b4d5f74c37af3c69d2d9bce1ea32f047f33a6c908502224de2dffe741f1027e7f3c2126eac9e92cc2161fccb11e4597b84442be713ab5d09db166b5233             7266 Packages
+ 1fed2ee4218203d2694cc26bc79aa8bbfadfa9db63fc2322f7ab62db91f9e546f696a65bcd7b4b3f728e4f0acdb7dac4bd2ab688372a7b8c357cadaf270e36a4             1772 Packages.gz
+ 16d1bd8d5b84bd0751ebd4b01d639e8aaa74a13b48c5e90d87144e23cde732ea798f69e79012246ea2d0ee63dc58ae58f318a5dcfb0d40062561386a5033359c               65 Release

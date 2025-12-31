@@ -98,10 +98,10 @@ Download the binary for your architecture:
 
 ```bash
 # x86_64
-curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.0.13_Linux_x86_64.tar.gz
+curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.2.1_Linux_x86_64.tar.gz
 
 # ARM64
-curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.0.13_Linux_arm64.tar.gz
+curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.2.1_Linux_arm64.tar.gz
 ```
 
 Verify and install:

@@ -29,68 +29,70 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 
 1. **Trust the GPG Key**:
 
-    ```bash
-    curl -fsSL https://get.dotsecenv.com/key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/dotsecenv.gpg
-    ```
+   ```bash
+   curl -fsSL https://get.dotsecenv.com/key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/dotsecenv.gpg
+   ```
 
 2. **Add the Repository**:
 
-    ```bash
-    echo "deb [signed-by=/etc/apt/keyrings/dotsecenv.gpg] https://get.dotsecenv.com/apt/ ./" | sudo tee /etc/apt/sources.list.d/dotsecenv.list
-    ```
+   ```bash
+   echo "deb [signed-by=/etc/apt/keyrings/dotsecenv.gpg] https://get.dotsecenv.com/apt/ ./" | sudo tee /etc/apt/sources.list.d/dotsecenv.list
+   ```
 
 3. **Install**:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install dotsecenv
-    ```
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install dotsecenv
+   ```
 
 ## Fedora / RedHat / CentOS
 
 1. **Add the Repository**:
 
-    ```bash
-    cat <<EOF | sudo tee /etc/yum.repos.d/dotsecenv.repo
-    [dotsecenv]
-    name=DotSecEnv Repository
-    baseurl=https://get.dotsecenv.com/yum/
-    enabled=1
-    gpgcheck=1
-    repo_gpgcheck=1
-    gpgkey=https://get.dotsecenv.com/key.asc
-    EOF
-    ```
+   ```bash
+   cat <<EOF | sudo tee /etc/yum.repos.d/dotsecenv.repo
+   [dotsecenv]
+   name=DotSecEnv Repository
+   baseurl=https://get.dotsecenv.com/yum/
+   enabled=1
+   gpgcheck=1
+   repo_gpgcheck=1
+   gpgkey=https://get.dotsecenv.com/key.asc
+   EOF
+   ```
 
 2. **Install**:
 
-    ```bash
-    sudo dnf install dotsecenv
-    ```
+   ```bash
+   sudo dnf install dotsecenv
+   ```
 
 ## Arch Linux / Manjaro
 
 1. **Add to `pacman.conf`**:
 
-    ```bash
-    cat <<'EOF' | sudo tee -a /etc/pacman.conf
-    [dotsecenv]
-    Server = https://get.dotsecenv.com/arch/$arch
-    SigLevel = Required DatabaseOptional
-    EOF
-    ```
+   ```bash
+   cat <<'EOF' | sudo tee -a /etc/pacman.conf
+   [dotsecenv]
+   Server = https://get.dotsecenv.com/arch/$arch
+   SigLevel = Required DatabaseOptional
+   EOF
+   ```
 
 2. **Trust the Key**:
-    You need to locally sign the key for pacman to trust it.
+   You need to locally sign the key for pacman to trust it.
 
-    ```bash
-    curl -fsSL https://get.dotsecenv.com/key.asc | sudo pacman-key --add -
-    sudo pacman-key --lsign-key E60A1740BAEF49284D22EA7D3C376348F0921C59
-    ```
+   ```bash
+   curl -fsSL https://get.dotsecenv.com/key.asc | sudo pacman-key --add -
+   sudo pacman-key --lsign-key E60A1740BAEF49284D22EA7D3C376348F0921C59
+   ```
 
 3. **Install**:
-    ```bash
-    sudo pacman -Sy dotsecenv
-    ```
+
+   ```bash
+   sudo pacman -Sy dotsecenv
+   ```
 
 ## Linux (Direct Download)
 

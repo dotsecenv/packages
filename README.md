@@ -121,10 +121,10 @@ Download the binary for your architecture:
 
 ```bash
 # Apple Silicon (M1/M2/M3)
-curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.0_Darwin_arm64.tar.gz
+curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.1_Darwin_arm64.tar.gz
 
 # Intel
-curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.0_Darwin_x86_64.tar.gz
+curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.1_Darwin_x86_64.tar.gz
 ```
 
 Verify and install:

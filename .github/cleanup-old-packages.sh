@@ -34,7 +34,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Extract version from filename (e.g., dotsecenv_0.0.4_amd64.deb -> 0.0.4)
+# Extract version from filename (e.g., dotsecenv_x.y.z_amd64.deb -> x.y.z)
 extract_version() {
     local filename="$1"
     echo "$filename" | sed -E 's/dotsecenv_([0-9]+\.[0-9]+\.[0-9]+)_.*/\1/'

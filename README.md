@@ -99,11 +99,14 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 Download the binary for your architecture:
 
 ```bash
+# Get latest version
+DOTSECENV_VERSION=$(curl -s https://api.github.com/repos/dotsecenv/dotsecenv/releases/latest | grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
+
 # x86_64
-curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.2.1_Linux_x86_64.tar.gz
+curl -LO "https://get.dotsecenv.com/linux/dotsecenv_${DOTSECENV_VERSION}_Linux_x86_64.tar.gz"
 
 # ARM64
-curl -LO https://get.dotsecenv.com/linux/dotsecenv_0.2.1_Linux_arm64.tar.gz
+curl -LO "https://get.dotsecenv.com/linux/dotsecenv_${DOTSECENV_VERSION}_Linux_arm64.tar.gz"
 ```
 
 Verify and install:
@@ -122,11 +125,14 @@ sudo mv dotsecenv /usr/local/bin/
 Download the binary for your architecture:
 
 ```bash
+# Get latest version
+DOTSECENV_VERSION=$(curl -s https://api.github.com/repos/dotsecenv/dotsecenv/releases/latest | grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
+
 # Apple Silicon (M1/M2/M3)
-curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.1_Darwin_arm64.tar.gz
+curl -LO "https://get.dotsecenv.com/darwin/dotsecenv_${DOTSECENV_VERSION}_Darwin_arm64.tar.gz"
 
 # Intel
-curl -LO https://get.dotsecenv.com/darwin/dotsecenv_0.2.1_Darwin_x86_64.tar.gz
+curl -LO "https://get.dotsecenv.com/darwin/dotsecenv_${DOTSECENV_VERSION}_Darwin_x86_64.tar.gz"
 ```
 
 Verify and install:

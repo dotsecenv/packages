@@ -1,5 +1,7 @@
 # dotsecenv Packages
 
+[![Publish Packages](https://github.com/dotsecenv/packages/actions/workflows/publish.yml/badge.svg)](https://github.com/dotsecenv/packages/actions/workflows/publish.yml)
+
 The `dotsecenv` packages are hosted here for Debian/Ubuntu, Fedora/RedHat, Arch Linux/Manjaro, and macOS.
 
 Public GPG Key: [key.asc](https://get.dotsecenv.com/key.asc)

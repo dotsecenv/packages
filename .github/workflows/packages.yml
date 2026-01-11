@@ -156,7 +156,7 @@ jobs:
           createrepo_c .
 
           # Sign repo
-          gpg --batch --yes --detach-sign --armor --default-key "${{ steps.import_gpg.outputs.keyid }}" repodata/repomd.xml
+          gpg --batch --yes --detach-sign --default-key "${{ steps.import_gpg.outputs.keyid }}" repodata/repomd.xml
 
       - name: Prepare Arch Files
         env:

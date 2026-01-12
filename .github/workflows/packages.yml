@@ -156,7 +156,7 @@ jobs:
           createrepo_c .
 
           # Sign repo
-          gpg --batch --yes --detach-sign --armor --default-key "${{ steps.import_gpg.outputs.keyid }}" repodata/repomd.xml
+          gpg --batch --yes --detach-sign --default-key "${{ steps.import_gpg.outputs.keyid }}" repodata/repomd.xml
 
       - name: Prepare Arch Files
         env:
@@ -290,6 +290,55 @@ jobs:
           file_pattern: "apt/ arch/ darwin/ linux/ yum/ key.asc README.md"
           tag_name: ${{ env.VERSION }}
 
+  verify-darwin-notarization:
+    runs-on: macos-latest
+    needs: update-repos
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          trust_level: 5
+
+      - name: Verify Darwin packages
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          for arch in arm64 x86_64; do
+            ARCHIVE="darwin/dotsecenv_${VERSION#v}_Darwin_${arch}.tar.gz"
+
+            # Verify GPG signature
+            gpg --verify "${ARCHIVE}.sig" "$ARCHIVE"
+
+            # Verify checksum
+            grep "dotsecenv_${VERSION#v}_Darwin_${arch}.tar.gz$" darwin/checksums.txt | shasum -a 256 -c
+
+            # Extract and verify notarization
+            TEMP_DIR=$(mktemp -d)
+            tar -xzf "$ARCHIVE" -C "$TEMP_DIR"
+
+            echo "==> Verifying code signature for ${arch}..."
+            codesign --verify --verbose "$TEMP_DIR/dotsecenv"
+
+            echo "==> Verifying notarization for ${arch}..."
+            spctl --assess --verbose "$TEMP_DIR/dotsecenv"
+            # Expected: accepted, source=Notarized Developer ID
+
+            echo "==> Signature details for ${arch}:"
+            codesign -dv --verbose=4 "$TEMP_DIR/dotsecenv"
+
+            rm -rf "$TEMP_DIR"
+          done
+
+  trigger-publish:
+    needs: verify-darwin-notarization
+    runs-on: ubuntu-latest
+    steps:
       - name: Trigger Publish Workflow
         uses: peter-evans/repository-dispatch@v4
         with:

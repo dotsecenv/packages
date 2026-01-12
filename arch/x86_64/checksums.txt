@@ -17,3 +17,4 @@ ae5083d37dfb33ec9d54f5b7b2c8c97e91a214a3ca1a4341541dc1575d4cea8a  dotsecenv_0.0.
 8e646ec3890df40bce42a7e0b8475312967eba75cffb32ca5bc4444c96715727  dotsecenv_0.0.11_amd64.pkg.tar.zst
 368bd27c653c8d249465b3938c4b62e808efb0bc2fe1d438ae3ba33ef0f48578  dotsecenv_0.4.0_amd64.pkg.tar.zst
 368bd27c653c8d249465b3938c4b62e808efb0bc2fe1d438ae3ba33ef0f48578  dotsecenv_0.4.0_amd64.pkg.tar.zst
+368bd27c653c8d249465b3938c4b62e808efb0bc2fe1d438ae3ba33ef0f48578  dotsecenv_0.4.0_amd64.pkg.tar.zst

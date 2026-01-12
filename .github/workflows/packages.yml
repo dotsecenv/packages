@@ -310,15 +310,16 @@ jobs:
       - name: Verify Darwin packages
         env:
           VERSION: ${{ env.VERSION }}
+        working-directory: darwin
         run: |
           for arch in arm64 x86_64; do
-            ARCHIVE="darwin/dotsecenv_${VERSION#v}_Darwin_${arch}.tar.gz"
+            ARCHIVE="dotsecenv_${VERSION#v}_Darwin_${arch}.tar.gz"
 
             # Verify GPG signature
             gpg --verify "${ARCHIVE}.sig" "$ARCHIVE"
 
             # Verify checksum
-            grep "dotsecenv_${VERSION#v}_Darwin_${arch}.tar.gz$" darwin/checksums.txt | shasum -a 256 -c
+            grep "${ARCHIVE}$" checksums.txt | shasum -a 256 -c
 
             # Extract and verify notarization
             TEMP_DIR=$(mktemp -d)

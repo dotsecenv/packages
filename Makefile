@@ -1,12 +1,9 @@
-.PHONY: cleanup-dry-run
-cleanup-dry-run:
-	@./.github/cleanup-old-packages.sh
+.PHONY: deploy
+deploy:
+	@echo "Deploying packages from GitHub releases (default: 5 versions)..."
+	@gh workflow run deploy.yml
 
-.PHONY: clean
-clean:
-	@./.github/cleanup-old-packages.sh --force
-
-.PHONY: publish-packages
-publish-packages:
-	@echo "Publish https://get.dotsecenv.com/ from latest commit..."
-	@gh workflow run publish.yml --ref main
+.PHONY: deploy-all
+deploy-all:
+	@echo "Deploying ALL versions from GitHub releases..."
+	@gh workflow run deploy.yml -f keep_versions=100

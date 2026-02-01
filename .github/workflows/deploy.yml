@@ -3,6 +3,9 @@ name: Deploy Packages
 on:
   repository_dispatch:
     types: [update-packages]
+  pull_request:
+    branches:
+      - main
 
   workflow_dispatch:
     inputs:

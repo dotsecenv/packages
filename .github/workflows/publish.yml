@@ -1,11 +1,8 @@
-name: Deploy Packages
+name: Publish Packages
 
 on:
   repository_dispatch:
-    types: [update-packages]
-  pull_request:
-    branches:
-      - main
+    types: [publish-packages]
 
   workflow_dispatch:
     inputs:

@@ -27,6 +27,32 @@ curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 >
 > **Visit the project's repository at [github.com/dotsecenv/dotsecenv](https://github.com/dotsecenv/dotsecenv).**
 
+## Install Script (recommended)
+
+The universal installer is the fastest way to get dotsecenv on any macOS or Linux system. It auto-detects your platform, downloads the correct binary, verifies checksums and GPG signatures, and installs shell completions, man pages, and the shell plugin.
+
+```bash
+curl -fsSL https://get.dotsecenv.com/install.sh | bash
+```
+
+Install a specific version or customize behavior with CLI flags:
+
+```bash
+curl -fsSL https://get.dotsecenv.com/install.sh | bash -s -- --version v1.2.3
+```
+
+Or use environment variables for CI/CD pipelines:
+
+```bash
+VERSION=v1.2.3 INSTALL_DIR=/opt/bin curl -fsSL https://get.dotsecenv.com/install.sh | bash
+```
+
+Run with `--help` for all available options. See the [main repo](https://github.com/dotsecenv/dotsecenv#install-script-recommended) for the full options reference.
+
+---
+
+If you prefer to use a native package manager, choose your distribution below:
+
 ## Debian / Ubuntu
 
 1. **Trust the GPG Key**:

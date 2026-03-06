@@ -214,10 +214,17 @@ jobs:
           fi
 
       - name: Copy Static Files
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          LATEST: ${{ steps.versions.outputs.latest }}
         run: |
           gpg --armor --export "${{ steps.import_gpg.outputs.keyid }}" > _stage/key.asc
           cp README.md _stage/
           cp CNAME _stage/
+
+          # Fetch install.sh from the main repo (pinned to the latest release tag)
+          gh api "repos/dotsecenv/dotsecenv/contents/scripts/install.sh?ref=${LATEST}" \
+            --jq '.content' | base64 -d > _stage/install.sh
 
       - name: Generate Index Pages
         run: bash .github/generate-index.sh _stage

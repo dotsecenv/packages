@@ -60,9 +60,15 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          # Get last N release tags
+          # Get last N release tags. Filter out drafts and prereleases:
+          # the releases API returns drafts when the token has push
+          # access, and a stale orphan draft (or an rc tag pushed for
+          # CI testing) shouldn't be processed by production — its
+          # old-key signatures or unpublished assets will fail
+          # "Verify All Assets" and wedge the run.
           VERSIONS=$(gh api repos/dotsecenv/dotsecenv/releases \
-            --jq '.[].tag_name' | head -n ${{ env.KEEP_VERSIONS }})
+            --jq '.[] | select(.draft|not) | select(.prerelease|not) | .tag_name' \
+            | head -n ${{ env.KEEP_VERSIONS }})
 
           echo "versions<<EOF" >> $GITHUB_OUTPUT
           echo "$VERSIONS" >> $GITHUB_OUTPUT

@@ -7,21 +7,26 @@ The `dotsecenv` packages are hosted here for Debian/Ubuntu, Fedora/RedHat, Arch 
 Public GPG Key: [key.asc](https://get.dotsecenv.com/key.asc)
 
 ```text
-pub   rsa4096 2025-12-19 [SC] [expires: 2027-12-19]
-      E60A1740BAEF49284D22EA7D3C376348F0921C59
+pub   rsa4096 2026-05-14 [SC] [expires: 2028-05-13]
+      0B8DB28079ACFA7497F0B8FE647E9C8219626442
 uid           DotSecEnv Releases (Automated Release Signing Key) <release@dotsecenv.com>
-sub   rsa4096 2025-12-19 [E] [expires: 2027-12-19]
 ```
 
-The key can be verified using the [OpenPgp Keyserver](https://keys.openpgp.org/search?q=E60A1740BAEF49284D22EA7D3C376348F0921C59) or on [Keybase](https://keybase.io/dotsecenv).
+The key can be verified using the [OpenPGP Keyserver](https://keys.openpgp.org/search?q=0B8DB28079ACFA7497F0B8FE647E9C8219626442) or on [Keybase](https://keybase.io/dotsecenv).
 
 ```shell
 # OpenPGP Keyserver
-gpg --keyserver keys.openpgp.org --recv-keys E60A1740BAEF49284D22EA7D3C376348F0921C59
+gpg --keyserver keys.openpgp.org --recv-keys 0B8DB28079ACFA7497F0B8FE647E9C8219626442
 
 # or Keybase
 curl https://keybase.io/dotsecenv/pgp_keys.asc | gpg --import
 ```
+
+Releases up to and including **v0.6.3** were signed with the previous key
+(`E60A1740BAEF49284D22EA7D3C376348F0921C59`). To verify those older
+signatures, also import the old key. The `key.asc` file at
+[get.dotsecenv.com/key.asc](https://get.dotsecenv.com/key.asc) contains
+both keys concatenated, so a single import covers all releases.
 
 > [!IMPORTANT] > **For project details, documentation, and source code**
 >
@@ -113,7 +118,7 @@ If you prefer to use a native package manager, choose your distribution below:
 
    ```bash
    curl -fsSL https://get.dotsecenv.com/key.asc | sudo pacman-key --add -
-   sudo pacman-key --lsign-key E60A1740BAEF49284D22EA7D3C376348F0921C59
+   sudo pacman-key --lsign-key 0B8DB28079ACFA7497F0B8FE647E9C8219626442
    ```
 
 3. **Install**:

@@ -224,7 +224,14 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           LATEST: ${{ steps.versions.outputs.latest }}
         run: |
-          gpg --armor --export "${{ steps.import_gpg.outputs.keyid }}" > _stage/key.asc
+          # key.asc in this repo is the canonical bundle of public keys
+          # users need to verify ANY release (current + previous keys
+          # concatenated). Copy it as-is so prior signatures stay
+          # verifiable across key rotations.
+          # We deliberately do NOT regenerate via `gpg --armor --export`:
+          # that exports only the currently-imported signing key and
+          # would strip retired keys from the deployed bundle.
+          cp key.asc _stage/key.asc
           cp README.md _stage/
           cp CNAME _stage/
 

@@ -1,8 +1,13 @@
 name: Publish Packages
 
 on:
-  repository_dispatch:
-    types: [publish-packages]
+  # Trigger on push to main. The monorepo's publish-packages job pushes
+  # source (key.asc, retracted.txt, this very workflow file, etc.) to
+  # this satellite via a signed commit on every release; that push lands
+  # here and triggers this workflow. Renovate PRs that merge to main
+  # also trigger a republish to pick up dependency updates.
+  push:
+    branches: [main]
 
   workflow_dispatch:
     inputs:
@@ -21,7 +26,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  KEEP_VERSIONS: ${{ github.event.client_payload.keep_versions || inputs.keep_versions || '5' }}
+  KEEP_VERSIONS: ${{ inputs.keep_versions || '5' }}
 
 jobs:
   build-and-deploy:
@@ -55,19 +60,57 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: dotsecenv
 
+      - name: Read Retraction List
+        id: retracted
+        run: |
+          # retracted.txt is pushed to this satellite from the monorepo
+          # (dotsecenv/dotsecenv) by the publish-packages job in
+          # release.yml. It's generated there from go.mod's `retract`
+          # block via `go mod edit -json | jq`, so the canonical source
+          # of truth lives with the code in one place.
+          # Format: one "VERSION<TAB>REASON" line per retracted version.
+          set -euo pipefail
+
+          if [ -f retracted.txt ] && [ -s retracted.txt ]; then
+            echo "Retracted versions:"
+            cat retracted.txt
+            # Comma-separated tag list for the jq exclusion in the next step.
+            RETRACTED_CSV=$(cut -f1 retracted.txt | grep -v '^$' | paste -sd, -)
+          else
+            echo "No retracted.txt or file is empty; treating as no retractions"
+            RETRACTED_CSV=""
+          fi
+          echo "csv=${RETRACTED_CSV}" >> "$GITHUB_OUTPUT"
+
       - name: Get Release Versions
         id: versions
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RETRACTED_CSV: ${{ steps.retracted.outputs.csv }}
         run: |
-          # Get last N release tags. Filter out drafts and prereleases:
-          # the releases API returns drafts when the token has push
-          # access, and a stale orphan draft (or an rc tag pushed for
-          # CI testing) shouldn't be processed by production — its
-          # old-key signatures or unpublished assets will fail
-          # "Verify All Assets" and wedge the run.
+          # Get last N release tags. Filter out:
+          #  - drafts (stale orphans / rc tags pushed for CI testing)
+          #  - prereleases
+          #  - versions listed in dotsecenv's go.mod retract block
+          # Retracted releases may still appear in the API even after
+          # their assets are deleted; excluding by tag_name catches both
+          # asset-deleted and not-yet-asset-deleted cases.
+          RETRACTED_FILTER=""
+          if [ -n "${RETRACTED_CSV}" ]; then
+            # Build a jq array literal from the CSV.
+            RETRACTED_FILTER=$(printf '%s' "${RETRACTED_CSV}" | \
+              awk -F, '{
+                for (i=1; i<=NF; i++) printf "%s\"%s\"", (i>1?",":""), $i
+              }')
+          fi
+          JQ_EXPR='.[] | select(.draft|not) | select(.prerelease|not)'
+          if [ -n "${RETRACTED_FILTER}" ]; then
+            JQ_EXPR="${JQ_EXPR} | select(.tag_name | IN(${RETRACTED_FILTER}) | not)"
+          fi
+          JQ_EXPR="${JQ_EXPR} | .tag_name"
+
           VERSIONS=$(gh api repos/dotsecenv/dotsecenv/releases \
-            --jq '.[] | select(.draft|not) | select(.prerelease|not) | .tag_name' \
+            --jq "${JQ_EXPR}" \
             | head -n ${{ env.KEEP_VERSIONS }})
 
           echo "versions<<EOF" >> $GITHUB_OUTPUT
@@ -78,8 +121,57 @@ jobs:
           LATEST=$(echo "$VERSIONS" | head -n 1)
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-          echo "Found versions:"
+          echo "Found versions (after filtering retracted):"
           echo "$VERSIONS"
+
+      # Mirrors update-homebrew-tap's CDN-fresh wait. GitHub Releases is
+      # fronted by a CDN that can briefly serve the pre-notarization copy
+      # of Darwin tarballs right after a release publish — the notarize-
+      # macos jobs re-upload those archives, and the CDN may still hand
+      # out the original goreleaser-built bytes for a window. Only the
+      # LATEST version's Darwin archives can be in this state; everything
+      # older has long since converged. Wait for them to match the
+      # published checksums.txt before downloading.
+      - name: Wait for CDN to serve latest Darwin archives
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          LATEST: ${{ steps.versions.outputs.latest }}
+        run: |
+          set -euo pipefail
+          if [ -z "${LATEST}" ]; then
+            echo "No latest version resolved; skipping CDN wait"
+            exit 0
+          fi
+
+          mkdir -p /tmp/cdn-check
+          gh release download "${LATEST}" --repo dotsecenv/dotsecenv \
+            --pattern "checksums.txt" --dir /tmp/cdn-check
+
+          VERSION_NUM="${LATEST#v}"
+          for arch in arm64 x86_64; do
+            ASSET="dotsecenv_${VERSION_NUM}_Darwin_${arch}.tar.gz"
+            EXPECTED=$(grep "${ASSET}\$" /tmp/cdn-check/checksums.txt | cut -d' ' -f1 || true)
+            if [ -z "${EXPECTED}" ]; then
+              echo "::warning::No checksum entry for ${ASSET}; skipping"
+              continue
+            fi
+            URL="https://github.com/dotsecenv/dotsecenv/releases/download/${LATEST}/${ASSET}"
+
+            deadline=$(( $(date +%s) + 300 ))
+            while :; do
+              ACTUAL=$(curl -fsSL "${URL}" | sha256sum | cut -d' ' -f1)
+              if [ "${ACTUAL}" = "${EXPECTED}" ]; then
+                echo "${ASSET}: CDN matches expected (${EXPECTED})"
+                break
+              fi
+              if [ "$(date +%s)" -ge "${deadline}" ]; then
+                echo "::error::${ASSET}: CDN still stale after 300s (expected ${EXPECTED}, got ${ACTUAL})"
+                exit 1
+              fi
+              echo "${ASSET}: CDN stale (expected ${EXPECTED}, got ${ACTUAL}); retrying in 10s"
+              sleep 10
+            done
+          done
 
       - name: Download All Release Assets
         env:
@@ -234,6 +326,15 @@ jobs:
           cp key.asc _stage/key.asc
           cp README.md _stage/
           cp CNAME _stage/
+
+          # Serve retracted.txt at get.dotsecenv.com/retracted.txt so
+          # install.sh can fetch it and refuse to install retracted
+          # versions. The file lives at the satellite repo root because
+          # the monorepo publish-packages job generates it from go.mod
+          # and pushes it as part of packages/ source.
+          if [ -f retracted.txt ]; then
+            cp retracted.txt _stage/retracted.txt
+          fi
 
           # Fetch install.sh from the main repo (pinned to the latest release tag)
           gh api "repos/dotsecenv/dotsecenv/contents/scripts/install.sh?ref=${LATEST}" \

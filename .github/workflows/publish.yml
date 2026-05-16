@@ -55,19 +55,88 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: dotsecenv
 
+      - name: Fetch Retraction List
+        id: retracted
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          # Canonical source of truth is dotsecenv's go.mod retract block.
+          # Mirror the parser logic from dotsecenv/scripts/extract-retracted.sh
+          # so this workflow stays self-contained (no curl-piping a script
+          # into bash from another repo). Output is "VERSION<TAB>REASON"
+          # lines, suitable for both filtering below and for serving as
+          # get.dotsecenv.com/retracted.txt later in the build.
+          gh api repos/dotsecenv/dotsecenv/contents/go.mod \
+            --jq '.content' | base64 -d > /tmp/dotsecenv-go.mod
+
+          awk '
+            function emit(v, r) {
+              gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+              gsub(/^[[:space:]]+|[[:space:]]+$/, "", r)
+              if (v != "") printf "%s\t%s\n", v, r
+            }
+            /^retract[[:space:]]*\(/ { in_block = 1; next }
+            in_block && /^[[:space:]]*\)/ { in_block = 0; next }
+            in_block {
+              line = $0
+              sub(/^[[:space:]]+/, "", line)
+              if (line == "" || line ~ /^\/\//) next
+              if (match(line, /^v[0-9]+\.[0-9]+\.[0-9]+[^[:space:]]*/)) {
+                v = substr(line, RSTART, RLENGTH)
+                rest = substr(line, RSTART + RLENGTH)
+                r = (match(rest, /\/\//)) ? substr(rest, RSTART + RLENGTH) : ""
+                emit(v, r)
+              }
+              next
+            }
+            /^retract[[:space:]]+v[0-9]/ {
+              line = $0
+              sub(/^retract[[:space:]]+/, "", line)
+              if (match(line, /^v[0-9]+\.[0-9]+\.[0-9]+[^[:space:]]*/)) {
+                v = substr(line, RSTART, RLENGTH)
+                rest = substr(line, RSTART + RLENGTH)
+                r = (match(rest, /\/\//)) ? substr(rest, RSTART + RLENGTH) : ""
+                emit(v, r)
+              }
+            }
+          ' /tmp/dotsecenv-go.mod > /tmp/retracted.txt
+
+          echo "Retracted versions:"
+          cat /tmp/retracted.txt || echo "(none)"
+
+          # Comma-separated tag list for the jq exclusion below.
+          RETRACTED_CSV=$(cut -f1 /tmp/retracted.txt | paste -sd, -)
+          echo "csv=${RETRACTED_CSV}" >> $GITHUB_OUTPUT
+
       - name: Get Release Versions
         id: versions
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RETRACTED_CSV: ${{ steps.retracted.outputs.csv }}
         run: |
-          # Get last N release tags. Filter out drafts and prereleases:
-          # the releases API returns drafts when the token has push
-          # access, and a stale orphan draft (or an rc tag pushed for
-          # CI testing) shouldn't be processed by production — its
-          # old-key signatures or unpublished assets will fail
-          # "Verify All Assets" and wedge the run.
+          # Get last N release tags. Filter out:
+          #  - drafts (stale orphans / rc tags pushed for CI testing)
+          #  - prereleases
+          #  - versions listed in dotsecenv's go.mod retract block
+          # Retracted releases may still appear in the API even after
+          # their assets are deleted; excluding by tag_name catches both
+          # asset-deleted and not-yet-asset-deleted cases.
+          RETRACTED_FILTER=""
+          if [ -n "${RETRACTED_CSV}" ]; then
+            # Build a jq array literal from the CSV.
+            RETRACTED_FILTER=$(printf '%s' "${RETRACTED_CSV}" | \
+              awk -F, '{
+                for (i=1; i<=NF; i++) printf "%s\"%s\"", (i>1?",":""), $i
+              }')
+          fi
+          JQ_EXPR='.[] | select(.draft|not) | select(.prerelease|not)'
+          if [ -n "${RETRACTED_FILTER}" ]; then
+            JQ_EXPR="${JQ_EXPR} | select(.tag_name | IN(${RETRACTED_FILTER}) | not)"
+          fi
+          JQ_EXPR="${JQ_EXPR} | .tag_name"
+
           VERSIONS=$(gh api repos/dotsecenv/dotsecenv/releases \
-            --jq '.[] | select(.draft|not) | select(.prerelease|not) | .tag_name' \
+            --jq "${JQ_EXPR}" \
             | head -n ${{ env.KEEP_VERSIONS }})
 
           echo "versions<<EOF" >> $GITHUB_OUTPUT
@@ -78,7 +147,7 @@ jobs:
           LATEST=$(echo "$VERSIONS" | head -n 1)
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-          echo "Found versions:"
+          echo "Found versions (after filtering retracted):"
           echo "$VERSIONS"
 
       - name: Download All Release Assets
@@ -234,6 +303,12 @@ jobs:
           cp key.asc _stage/key.asc
           cp README.md _stage/
           cp CNAME _stage/
+
+          # Serve retracted.txt at get.dotsecenv.com/retracted.txt so
+          # install.sh can fetch it and refuse to install retracted
+          # versions. Generated from dotsecenv go.mod in the
+          # "Fetch Retraction List" step above.
+          cp /tmp/retracted.txt _stage/retracted.txt
 
           # Fetch install.sh from the main repo (pinned to the latest release tag)
           gh api "repos/dotsecenv/dotsecenv/contents/scripts/install.sh?ref=${LATEST}" \
